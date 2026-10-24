@@ -1,0 +1,9 @@
+{
+  "name": "wa-progress-lab-pro",
+  "version": "5.0.0",
+  "private": true,
+  "description": "World Athletics progression analytics",
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080b10">
+  <title>WA Progress Lab</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/scoring-data.js"></script>
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <div id="tooltip" class="tooltip" hidden></div>
+
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="WA Progress Lab">
+      <span class="brand-mark">WA</span>
+      <span>Progress <em>Lab</em></span>
+    </a>
+    <div class="data-badge">2025 Scoring Tables</div>
+  </header>
+
+  <main class="page">
+    <nav class="tabs" aria-label="Main navigation">
+      <button class="tab active" data-view="progress">Athlete Progress</button>
+      <button class="tab" data-view="compare">Compare Athletes</button>
+    </nav>
+
+    <!-- ATHLETE PROGRESS -->
+    <section id="view-progress" class="view active">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">PERFORMANCE DEVELOPMENT</p>
+          <h1>One athlete.<br><span>Every event.</span></h1>
+          <p class="hero-sub">
+            Search a World Athletics athlete, select one or more events and track
+            season-best progression on one comparable World Athletics points scale.
+          </p>
+        </div>
+        <div class="search-card panel">
+          <label for="progress-search">Athlete name or World Athletics ID</label>
+          <div class="search-row">
+            <input id="progress-search" autocomplete="off" placeholder="e.g. Jakob Ingebrigtsen">
+            <button id="progress-search-btn" class="primary">Search</button>
+          </div>
+          <div id="progress-search-results" class="search-results"></div>
+        </div>
+      </section>
+
+      <div id="progress-status" class="status"></div>
+
+      <div id="progress-app" class="app-area hidden">
+        <section class="profile-card panel">
+          <div class="profile-main">
+            <div class="avatar" id="progress-avatar">A</div>
+            <div>
+              <h2 id="progress-name">Athlete</h2>
+              <p id="progress-meta">—</p>
+            </div>
+          </div>
+          <div class="profile-meta-grid">
+            <div class="mini-stat">
+              <span>WA ID</span>
+              <strong id="progress-id">—</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Sex</span>
+              <select id="progress-sex" class="compact-select">
+                <option value="auto">Auto</option>
+                <option value="Men">Men</option>
+                <option value="Women">Women</option>
+              </select>
+            </div>
+            <div class="mini-stat">
+              <span>Results</span>
+              <strong id="progress-result-count">—</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel controls-panel">
+          <div class="controls-head">
+            <div>
+              <h3>Select events</h3>
+              <p>Choose one or more events. Multiple events are compared using WA points.</p>
+            </div>
+            <div class="quick-actions">
+              <button id="events-select-all" class="ghost small">Select all</button>
+              <button id="events-clear" class="ghost small">Clear</button>
+            </div>
+          </div>
+
+          <div id="event-selector" class="event-selector"></div>
+
+          <div class="display-controls">
+            <div class="field">
+              <label>Chart metric</label>
+              <select id="progress-metric">
+                <option value="points">World Athletics points</option>
+                <option value="performance">Actual performance</option>
+              </select>
+              <small id="metric-help">Actual performance is available when exactly one event is selected.</small>
+            </div>
+            <div class="field">
+              <label>Season aggregation</label>
+              <select id="progress-aggregation">
+                <option value="sb">Season best</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Scoring coverage</label>
+              <div class="coverage" id="progress-coverage">—</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel chart-panel">
+          <div class="chart-head">
+            <div>
+              <p class="eyebrow">PROGRESSION</p>
+              <h3 id="progress-chart-title">Season-best progression</h3>
+              <p id="progress-chart-subtitle">Select an event to begin.</p>
+            </div>
+            <div id="progress-legend" class="legend"></div>
+          </div>
+          <div class="chart-frame">
+            <svg id="progress-chart" class="chart" viewBox="0 0 1100 440" preserveAspectRatio="none" role="img"></svg>
+          </div>
+        </section>
+
+        <section id="progress-stat-cards" class="event-stat-grid"></section>
+
+        <section class="panel table-panel">
+          <div class="table-head">
+            <div>
+              <h3>Season best history</h3>
+              <p>Only selected events are shown.</p>
+            </div>
+            <button id="progress-export" class="ghost small">Export CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Season</th>
+                  <th>Event</th>
+                  <th>Mark</th>
+                  <th>WA points</th>
+                  <th>Date</th>
+                  <th>Competition</th>
+                </tr>
+              </thead>
+              <tbody id="progress-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- COMPARE ATHLETES -->
+    <section id="view-compare" class="view">
+      <section class="hero compare-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">DEVELOPMENT COMPARISON</p>
+          <h1>Compare the <span>trajectory.</span></h1>
+          <p class="hero-sub">
+            Add up to six athletes, choose one event and compare season-best development
+            by calendar year or by age.
+          </p>
+        </div>
+        <div class="search-card panel">
+          <label for="compare-search">Add athlete</label>
+          <div class="search-row">
+            <input id="compare-search" autocomplete="off" placeholder="Search athlete">
+            <button id="compare-search-btn" class="primary">Add</button>
+          </div>
+          <div id="compare-search-results" class="search-results"></div>
+          <div id="compare-athlete-chips" class="athlete-chips"></div>
+        </div>
+      </section>
+
+      <div id="compare-status" class="status"></div>
+
+      <div id="compare-app" class="app-area">
+        <section class="panel compare-controls">
+          <div class="field">
+            <label>Event</label>
+            <select id="compare-event">
+              <option value="">Add athletes first</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>X-axis</label>
+            <select id="compare-axis">
+              <option value="year">Calendar year</option>
+              <option value="age">Age</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Y-axis</label>
+            <select id="compare-metric">
+              <option value="performance">Actual performance</option>
+              <option value="points">World Athletics points</option>
+            </select>
+          </div>
+        </section>
+
+        <section class="panel chart-panel">
+          <div class="chart-head">
+            <div>
+              <p class="eyebrow">ATHLETE COMPARISON</p>
+              <h3 id="compare-chart-title">Add athletes to compare</h3>
+              <p id="compare-chart-subtitle">Season-best progression.</p>
+            </div>
+            <div id="compare-legend" class="legend"></div>
+          </div>
+          <div class="chart-frame">
+            <svg id="compare-chart" class="chart" viewBox="0 0 1100 460" preserveAspectRatio="none" role="img"></svg>
+          </div>
+        </section>
+
+        <section class="panel table-panel">
+          <div class="table-head">
+            <div>
+              <h3>Comparison data</h3>
+              <p>Season best for the selected event.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Athlete</th>
+                  <th>Year</th>
+                  <th>Age</th>
+                  <th>Mark</th>
+                  <th>WA points</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="compare-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Unofficial analytics project. Athlete data is retrieved through a third-party World Athletics data adapter.
+      Scoring uses the 2025 World Athletics scoring-table dataset included with this project.
+    </p>
+  </footer>
+</body>
+</html>
